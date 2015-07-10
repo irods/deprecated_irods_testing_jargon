@@ -18,8 +18,8 @@ def run_tests(module, result):
     _, jargon_commit, _ = module.run_command('git rev-parse HEAD', cwd=local_jargon_git_dir)
     result['jargon_commit'] = jargon_commit.strip()
 
-    settings_repo = '/projects/irods/vsphere-testing/irods_jargon_testing'
-    local_settings_git_dir = os.path.expanduser('~/irods_jargon_testing')
+    settings_repo = '/projects/irods/vsphere-testing/irods_testing_jargon'
+    local_settings_git_dir = os.path.expanduser('~/irods_testing_jargon')
     git_clone(module, settings_repo, local_settings_git_dir)
 
     module.run_command("sudo su - irods -c '{0}/jargon_files/prepare-irods.sh'".format(local_settings_git_dir))
