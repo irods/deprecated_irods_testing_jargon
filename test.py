@@ -20,6 +20,8 @@ def main(zone_bundle, deployment_name, packages_root_directory, output_directory
         data = library.run_ansible(module_name='irods_test_jargon', complex_args=complex_args, host_list=[icat_ip])
         logger.info(library.format_ansible_output(data))
 
+        library.gather(deployed_zone_bundle, output_directory)
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Test Jargon')
     parser.add_argument('--zone_bundle_input', type=str, required=True)

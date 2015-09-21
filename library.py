@@ -14,6 +14,7 @@ module_tuple = imp.find_module('irods_testing_zone_bundle', [configuration.irods
 imp.load_module('irods_testing_zone_bundle', *module_tuple)
 import irods_testing_zone_bundle
 from irods_testing_zone_bundle.deploy import deploy
+from irods_testing_zone_bundle.gather import gather
 from irods_testing_zone_bundle.destroy import deployed_zone_bundle_manager
 from irods_testing_zone_bundle.library import format_ansible_output
 from irods_testing_zone_bundle.library import register_log_handlers
