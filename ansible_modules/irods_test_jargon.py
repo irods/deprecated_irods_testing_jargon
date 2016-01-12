@@ -10,13 +10,13 @@ import subprocess
 
 
 def run_tests(module, result):
-    install_testing_dependencies(module)
+    put_irods_server_in_debug_mode(module)
+    install_testing_dependencies()
 
-    jargon_git_repo = 'https://github.com/DICE-UNC/jargon'
+    jargon_git_repo = module.params['git_repo']
     local_jargon_git_dir = os.path.expanduser('~/jargon')
     git_clone(module, jargon_git_repo, local_jargon_git_dir, commit='master')
-    _, jargon_commit, _ = module.run_command('git rev-parse HEAD', cwd=local_jargon_git_dir)
-    result['jargon_commit'] = jargon_commit.strip()
+    result['jargon_commit'] = module.run_command(['git', 'rev-parse', 'HEAD'], cwd=local_jargon_git_dir)[1].strip()
 
     settings_repo = '/projects/irods/vsphere-testing/irods_testing_jargon'
     local_settings_git_dir = os.path.expanduser('~/irods_testing_jargon')
@@ -28,11 +28,12 @@ def run_tests(module, result):
 
     gather_xml_reports(module)
 
-def install_testing_dependencies(module):
-    module.run_command('sudo apt-get update', check_rc=True)
-    packages = ['git', 'openjdk-7-jdk', 'maven2']
-    install_command = ['sudo', 'apt-get', 'install', '-y'] + packages
-    module.run_command(install_command, check_rc=True)
+def put_irods_server_in_debug_mode(module):
+    module.run_command(['sudo', 'su', '-c', 'python /var/lib/irods/packaging/update_json.py /etc/irods/server_config.json string environment_variables,spLogLevel 11'])
+    module.run_command(['sudo', 'su', '-', 'irods', '-c', '/var/lib/irods/iRODS/irodsctl restart'])
+
+def install_testing_dependencies():
+    install_os_packages(['git', 'openjdk-7-jdk', 'maven2'])
 
 def git_clone(module, repo, local_dir, commit=None):
     module.run_command('git clone --recursive {0} {1}'.format(repo, local_dir), check_rc=True)
@@ -51,6 +52,7 @@ def main():
     module = AnsibleModule(
         argument_spec = dict(
             output_directory=dict(type='str', required=True),
+            git_repo=dict(type='str', required=True),
         ),
         supports_check_mode=False,
     )
@@ -65,4 +67,5 @@ def main():
 
 
 from ansible.module_utils.basic import *
+from ansible.module_utils.local_ansible_utils_extension import *
 main()

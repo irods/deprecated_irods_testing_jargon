@@ -15,7 +15,7 @@
                     "commit_id": "03a0b81e94725d7e7fa9afdbf5229ea36bcc6676",
                     "compile_time": "2015-01-15T18:01:33Z",
                     "installation_time": "2015-01-15T18:07:53Z",
-                    "irods_version": "4.1.0"
+                    "irods_version": "deployment-determined"
                 },
                 "server_config": {
                     "run_server_as_root": "false",
