@@ -15,12 +15,12 @@ def run_tests(module, result):
 
     jargon_git_repo = module.params['git_repo']
     local_jargon_git_dir = os.path.expanduser('~/jargon')
-    git_clone(module, jargon_git_repo, local_jargon_git_dir, commit='master')
+    git_clone(jargon_git_repo, 'master', local_jargon_git_dir)
     result['jargon_commit'] = module.run_command(['git', 'rev-parse', 'HEAD'], cwd=local_jargon_git_dir)[1].strip()
 
     settings_repo = '/projects/irods/vsphere-testing/irods_testing_jargon'
     local_settings_git_dir = os.path.expanduser('~/irods_testing_jargon')
-    git_clone(module, settings_repo, local_settings_git_dir)
+    git_clone(settings_repo, 'master', local_settings_git_dir)
 
     module.run_command("sudo su - irods -c '{0}/jargon_files/prepare-irods.sh'".format(local_settings_git_dir))
     maven_output_file = os.path.expanduser('~/maven_output.log')
@@ -34,11 +34,6 @@ def put_irods_server_in_debug_mode(module):
 
 def install_testing_dependencies():
     install_os_packages(['git', 'openjdk-7-jdk', 'maven2'])
-
-def git_clone(module, repo, local_dir, commit=None):
-    module.run_command('git clone --recursive {0} {1}'.format(repo, local_dir), check_rc=True)
-    if commit:
-        module.run_command('git checkout {0}'.format(commit), cwd=local_dir, check_rc=True)
 
 def gather_xml_reports(module):
     xml_report_dirs = ['jargon-conveyor', 'jargon-core', 'jargon-data-utils', 'jargon-httpstream', 'jargon-ruleservice', 'jargon-ticket', 'jargon-user-profile', 'jargon-user-tagging', 'jargon-workflow']
